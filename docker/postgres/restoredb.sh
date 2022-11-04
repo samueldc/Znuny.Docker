@@ -1,0 +1,5 @@
+#!/bin/sh
+docker exec -i -e PGPASSFILE=/.pgpass ${PWD##*/}_httpd_1 bash -c "psql -h \$POSTGRES_HOST -p \$POSTGRES_PORT -U otrs -d otrs -c \"ALTER SCHEMA public RENAME TO public_prd; CREATE SCHEMA public; DROP SCHEMA public_dev CASCADE;\""
+docker exec -i -e PGPASSFILE=/.pgpass ${PWD##*/}_httpd_1 bash -c "pg_restore -h \$POSTGRES_HOST -p \$POSTGRES_PORT -U otrs -F custom -n public --verbose -O -c --if-exists -d otrs /opt/otrs/docker/postgres/otrs.backup"
+docker exec -i -e PGPASSFILE=/.pgpass ${PWD##*/}_httpd_1 bash -c "psql -h \$POSTGRES_HOST -p \$POSTGRES_PORT -U otrs -d otrs -c \"ALTER SCHEMA public RENAME TO public_dev; ALTER SCHEMA public_prd RENAME TO public;\""
+docker exec -i -e PGPASSFILE=/.pgpass ${PWD##*/}_httpd_1 bash -c "psql -h \$POSTGRES_HOST -p \$POSTGRES_PORT -U otrs -d otrs -f /opt/otrs/docker/postgres/mergeschemas.sql"

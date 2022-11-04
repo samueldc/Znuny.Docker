@@ -1,0 +1,70 @@
+version: "3.6"
+services:
+  httpd:
+    build:
+      context: .
+      dockerfile: ./docker/httpd/Dockerfile
+    command: [ "-l" ]
+    depends_on:
+      - postgres
+    shm_size: 1gb
+    environment:
+      - POSTGRES_HOST=${POSTGRES_HOST:-postgres}
+      - POSTGRES_PORT=${POSTGRES_PORT:-5432}
+      - POSTGRES_PASSWORD=otrs
+      - POSTGRES_USER=otrs
+      - POSTGRES_DB=otrs
+      - ORACLE_HOME=/opt/oracle/instantclient_19_16
+      - TNS_ADMIN=/opt/oracle/instantclient_19_16/network/admin
+      - NLS_LANG=American_America.UTF8
+      - OTRS_FQDN=localhost:8080
+      - OTRS_HTTPTYPE=http
+      - OTRS_NODEID=${OTRS_NODEID}
+      - OTRS_ADMINEMAIL=${OTRS_ADMINEMAIL:-root@localhost}
+    volumes: 
+      #- type: bind
+      #  source: .
+      #  target: /opt/otrs/
+      - type: volume
+        source: article
+        target: /opt/otrs/var/article
+      - type: tmpfs
+        target: /opt/otrs/var/tmp
+    ports:
+      - "8080:80"
+    networks:
+      - network
+    extra_hosts:
+      - host.docker.internal:host-gateway
+  postgres:
+    build: ./docker/postgres
+    shm_size: 256mb
+    environment:
+      - POSTGRES_PASSWORD=otrs
+      - POSTGRES_USER=otrs
+      - POSTGRES_DB=otrs
+    volumes:
+      - type: volume
+        source: postgres
+        target: /var/lib/postgresql/data
+    networks:
+      - network
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=root@localhost
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - "pgadmin:/var/lib/pgadmin"
+    ports:
+      - "8089:80"
+    networks:
+      - network
+networks:
+  network:
+volumes:
+  postgres:
+  pgadmin:
+  article:
