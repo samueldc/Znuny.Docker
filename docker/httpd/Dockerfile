@@ -59,6 +59,10 @@ FROM httpd:2.4
     RUN useradd -d /opt/otrs -u 5051 -g 5051 -G 33 -s /bin/bash ${OTRS_USER}
     RUN usermod -aG 5051 ${OTRS_GROUP}
     ADD --chown=${OTRS_USER}:${OTRS_GROUP} https://github.com/znuny/Znuny.git#rel-6_4 /opt/otrs/
+    COPY ./docker/httpd/Config.pm /opt/otrs/Kernel/
+    COPY ./docker/httpd/apache2-httpd.include.conf /opt/otrs/scripts/
+    COPY ./docker/httpd/otrs_daemon /opt/otrs/var/cron/
+    COPY ./docker/httpd/aaa_base /opt/otrs/var/cron/
     RUN chmod +x /usr/local/bin/entrypoint.sh
     RUN mkdir -p /opt/otrs/var/tmp
     VOLUME /opt/otrs

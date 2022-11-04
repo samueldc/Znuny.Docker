@@ -69,11 +69,11 @@ I suggest run ```docker system prune``` from time to time. The tutorial linked b
 
 - [How to Shrink a WSL2 Virtual Disk](https://stephenreescarter.net/how-to-shrink-a-wsl2-virtual-disk/)
 
-## Comandos úteis
+## Useful commands
 
 SMTP package analyzing
 
-```tcpdump -A host ce.camara.leg.br and port 587```
+```tcpdump -A host <mail server address> and port 587```
 
 ## Step by step to process implementation using Znuny Process Management option
 
@@ -106,3 +106,9 @@ SMTP package analyzing
 ## Common problems
 
 * [Postgres startup failure](https://stackoverflow.com/questions/8799474/postgresql-error-panic-could-not-locate-a-valid-checkpoint-record)
+
+## Work in progress
+
+* Daemon dedicated container.
+* Postfix dedicated container.
+* Everything else.
