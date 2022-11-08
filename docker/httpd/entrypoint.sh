@@ -27,7 +27,9 @@ printf "export OTRS_ADMINEMAIL=$OTRS_ADMINEMAIL\n" >> /etc/profile
 #. /etc/profile
 
 # Grants execution permission to merge database script
-chmod u+x /opt/otrs/docker/postgres/mergedb.sh
+chmod u+x /opt/otrs/docker/httpd/mergedb.sh
+chmod u+x /opt/otrs/docker/httpd/overwritedb.sh
+chmod u+x /opt/otrs/docker/httpd/fixsequencesdb.sh
 
 # Creates postgres password file based on env variables
 echo "$POSTGRES_HOST:$POSTGRES_PORT:$POSTGRES_DB:$POSTGRES_USER:$POSTGRES_PASSWORD" > /.pgpass
@@ -45,9 +47,9 @@ while pg_isready -h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER -d $POSTG
   sleep 5;
 done
 
-# Runs erge database script
+# Runs merge database script
 mergedb() {
-  /opt/otrs/docker/postgres/mergedb.sh
+  /opt/otrs/docker/httpd/mergedb.sh
 }
 
 # Runs migration script in case of upgrade
@@ -58,14 +60,19 @@ runmigration() {
   su otrs -c '/opt/otrs/scripts/MigrateToZnuny6_3.pl'
 }
 
-# Runs erge database script
+# Runs overwrite database script
 overwritedb() {
-  /opt/otrs/docker/postgres/overwritedb.sh
+  /opt/otrs/docker/httpd/overwritedb.sh
+}
+
+# Runs fix sequences script
+fixsequencesdb() {
+  /opt/otrs/docker/httpd/fixsequencesdb.sh
 }
 
 # Check if environment is local
 OTRS_ENVIRONMENT=''
-while getopts 'lmo' OPTION; do
+while getopts 'lmof' OPTION; do
   case "$OPTION" in
     l)
       OTRS_ENVIRONMENT='local'
@@ -79,6 +86,10 @@ while getopts 'lmo' OPTION; do
       echo "Overwrites db with backup"
       overwritedb;
       ;;
+    f)
+      echo "Fix database sequences"
+      fixsequencesdb;
+      ;;
     ?)
       # Do nothing else
       ;;
@@ -87,6 +98,7 @@ done
 
 # If environment is not local...
 if [[ $OTRS_ENVIRONMENT != 'local' ]]; then
+  echo "Attention => Will merge database!"
   mergedb;
 fi
 
@@ -103,13 +115,6 @@ printf "export LD_LIBRARY_PATH=$ORACLE_HOME\n" >> /etc/profile
 printf "export NLS_LANG=American_America.UTF8\n" >> /etc/profile
 ln -s /opt/otrs/.tnsnames.ora $TNS_ADMIN/tnsnames.ora
 ln -s /opt/otrs/.sqlnet.ora $TNS_ADMIN/sqlnet.ora
-
-# Rebuilds config
-su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Config::Sync'
-su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Config::Rebuild'
-
-# Deletes cache
-su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Cache::Delete' # Not necessary for now
 
 # Starts Cron
 cron

@@ -7,4 +7,8 @@ set -e
 #  GRANT ALL PRIVILEGES ON DATABASE docker TO docker;
 #EOSQL
 # OTRS database restore (uses only UNIX socket; do not define host and port)
-pg_restore -U "$POSTGRES_USER" -F custom -n public --verbose -O -cC --if-exists -d postgres /docker-entrypoint-initdb.d/otrs.backup
+if [[ -f "/docker-entrypoint-initdb.d/otrs.backup" ]]; then
+  pg_restore -U "$POSTGRES_USER" -F custom -n public --verbose -O -cC --if-exists -d postgres /docker-entrypoint-initdb.d/otrs.backup
+else
+  echo "Warning: Backup file not found at /opt/otrs/docker/httpd/otrs.backup"
+fi

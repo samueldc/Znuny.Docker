@@ -40,7 +40,7 @@ FROM httpd:2.4
         htop bash-completion postgresql-client netcat cron vim \
         odbcinst1debian2 libodbc1 odbcinst unixodbc \
         cpanminus build-essential libtest-nowarnings-perl \
-        libaio1 libaio-dev \
+        libaio1 libaio-dev git \
         && apt-get clean
     RUN echo 'debconf freetds/addtoodbc select true' | debconf-set-selections
     RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y --no-install-recommends tdsodbc
@@ -51,6 +51,14 @@ FROM httpd:2.4
     RUN mkdir /opt/oracle/instantclient_19_16/log
     COPY ./docker/httpd/my-httpd.conf /usr/local/apache2/conf/httpd.conf
     COPY ./docker/httpd/entrypoint.sh /usr/local/bin/
+    WORKDIR /opt/otrs
+    # ADD --chown=${OTRS_USER}:${OTRS_GROUP} https://github.com/znuny/Znuny.git#rel-6_4 /opt/otrs/
+    RUN git clone -b rel-6_4 https://github.com/znuny/Znuny.git .
+    COPY ./docker/httpd/mergedb.sh /opt/otrs/docker/httpd/
+    COPY ./docker/httpd/mergeschemas.sql /opt/otrs/docker/httpd/
+    COPY ./docker/httpd/overwritedb.sh /opt/otrs/docker/httpd/
+    COPY ./docker/httpd/fixsequencesdb.sh /opt/otrs/docker/httpd/
+    COPY ./docker/httpd/fixsequences.sql /opt/otrs/docker/httpd/
     ARG OTRS_USER=otrs
     ARG OTRS_GROUP=www-data
     ENV OTRS_USER=${OTRS_USER}
@@ -58,7 +66,6 @@ FROM httpd:2.4
     RUN groupadd -g 5051 ${OTRS_USER}
     RUN useradd -d /opt/otrs -u 5051 -g 5051 -G 33 -s /bin/bash ${OTRS_USER}
     RUN usermod -aG 5051 ${OTRS_GROUP}
-    ADD --chown=${OTRS_USER}:${OTRS_GROUP} https://github.com/znuny/Znuny.git#rel-6_4 /opt/otrs/
     COPY ./docker/httpd/Config.pm /opt/otrs/Kernel/
     COPY ./docker/httpd/apache2-httpd.include.conf /opt/otrs/scripts/
     COPY ./docker/httpd/otrs_daemon /opt/otrs/var/cron/
@@ -68,5 +75,4 @@ FROM httpd:2.4
     VOLUME /opt/otrs
     VOLUME /opt/otrs/var/tmp
     VOLUME /opt/otrs/var/article
-    WORKDIR /opt/otrs
     ENTRYPOINT ["entrypoint.sh"]

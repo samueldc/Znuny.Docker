@@ -2,7 +2,6 @@
 
 Znuny docker image project based on Znuny 6.4.
 
-
 ## About o Znuny
 
 - [Source code](https://github.com/znuny/znuny).
@@ -47,7 +46,7 @@ At least 6GB of RAM is recommended to run the whole stack.
 
 - Clone the repository.
 - If you use bind, run the script ```docker/local-users.sh``` as root to create the local users accounts and groups (in the case of WSL, ser config **metadata** above) passing the the name of you local user as argument. Example: ```sudo docker/local-users.sh nomeusuario```.
-- You could restore a previous database backup saving the backup file as ```docker/postgres/otrs.backup```.
+- You could restore a previous database backup saving the backup file as ```docker/httpd/otrs.backup``` and changing docker-compose adding command flag from ```-l``` to ```-lo```.
 - Run the stack described in the ```docker-compose.yml``` using ```docker-compose up -d --build```.
 - Check if the 4 containers are running using ```docker ps -a```.
 - Check if the volumes were created using ```docker volume ls```.
@@ -61,7 +60,7 @@ At least 6GB of RAM is recommended to run the whole stack.
 
 ## Database restore instructions
 
-Run the script ```docker/postgres/restoredb.sh``` (you should have the file ```docker/postgres/otrs.backup```). 
+Run the script ```docker/httpd/restoredb.sh``` (you should have the file ```docker/httpd/otrs.backup```). 
 
 ## About Docker disk space
 
@@ -74,29 +73,6 @@ I suggest run ```docker system prune``` from time to time. The tutorial linked b
 SMTP package analyzing
 
 ```tcpdump -A host <mail server address> and port 587```
-
-## Step by step to process implementation using Znuny Process Management option
-
-* Analisar especificação
-* Criar grupos
-* Criar perfils
-* Associar perfis e grupos
-* Criar filas
-* Criar grupos no IDEA para cada perfil
-* Criar campos de formulários
-* Criar serviços
-* Criar SLAs
-* Associar SLAs e serviços
-* Definir serviços como serviço padrão
-* Criar processo
-* Criar formulários
-* Criar atividades
-* Criar transições
-* Criar ações de transições
-* Criar ACLs
-* Criar atendentes genéricos
-* Criar notificações
-* Outros
 
 ## push e pull best practices (only if you use bind to your project folder)
 

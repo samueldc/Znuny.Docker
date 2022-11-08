@@ -19,7 +19,7 @@ services:
       - NLS_LANG=American_America.UTF8
       - OTRS_FQDN=localhost:8080
       - OTRS_HTTPTYPE=http
-      - OTRS_NODEID=${OTRS_NODEID}
+      - OTRS_NODEID=${OTRS_NODEID:-1}
       - OTRS_ADMINEMAIL=${OTRS_ADMINEMAIL:-root@localhost}
     volumes: 
       #- type: bind
@@ -31,7 +31,7 @@ services:
       - type: tmpfs
         target: /opt/otrs/var/tmp
     ports:
-      - "8080:80"
+      - "8090:80"
     networks:
       - network
     extra_hosts:
@@ -54,12 +54,12 @@ services:
     depends_on:
       - postgres
     environment:
-      - PGADMIN_DEFAULT_EMAIL=root@localhost
+      - PGADMIN_DEFAULT_EMAIL=admin@localhost.com
       - PGADMIN_DEFAULT_PASSWORD=admin
     volumes:
       - "pgadmin:/var/lib/pgadmin"
     ports:
-      - "8089:80"
+      - "8099:80"
     networks:
       - network
 networks:
