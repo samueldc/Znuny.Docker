@@ -8,7 +8,7 @@ set -e
 #EOSQL
 # OTRS database restore (uses only UNIX socket; do not define host and port)
 if [[ -f "/docker-entrypoint-initdb.d/otrs.backup" ]]; then
-  pg_restore -U "$POSTGRES_USER" -F custom -n public --verbose -O -cC --if-exists -d postgres /docker-entrypoint-initdb.d/otrs.backup
+  pg_restore -U "$POSTGRES_USER" -F custom -n public --verbose -O -cC --if-exists -d "$POSTGRES_DB" /docker-entrypoint-initdb.d/otrs.backup
 else
   echo "Warning: Backup file not found at /opt/otrs/docker/httpd/otrs.backup"
 fi

@@ -116,6 +116,13 @@ printf "export NLS_LANG=American_America.UTF8\n" >> /etc/profile
 ln -s /opt/otrs/.tnsnames.ora $TNS_ADMIN/tnsnames.ora
 ln -s /opt/otrs/.sqlnet.ora $TNS_ADMIN/sqlnet.ora
 
+# Rebuilds config
+su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Config::Sync'
+su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Config::Rebuild'
+
+# Deletes cache
+su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Cache::Delete' # Not necessary for now
+
 # Starts Cron
 cron
 
