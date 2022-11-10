@@ -17,9 +17,9 @@ services:
       - ORACLE_HOME=/opt/oracle/instantclient_19_16
       - TNS_ADMIN=/opt/oracle/instantclient_19_16/network/admin
       - NLS_LANG=American_America.UTF8
-      - OTRS_FQDN=localhost:8080
+      - OTRS_PASSWORD=${OTRS_PASSWORD:-otrs}
+      - OTRS_FQDN=localhost:8090
       - OTRS_HTTPTYPE=http
-      - OTRS_NODEID=${OTRS_NODEID:-1}
       - OTRS_ADMINEMAIL=${OTRS_ADMINEMAIL:-root@localhost}
     volumes: 
       #- type: bind

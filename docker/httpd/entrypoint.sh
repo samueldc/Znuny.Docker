@@ -5,6 +5,9 @@ set -e
 chown -R 5051:33 /opt/otrs
 chmod -R g+rwx /opt/otrs
 
+# Sets OTRS_NODEID to a random value
+OTRS_NODEID=$(($(($RANDOM%1000))+1))
+
 # Export environment variables to other users
 export POSTGRES_DB=$POSTGRES_DB
 export POSTGRES_USER=$POSTGRES_USER
@@ -116,8 +119,11 @@ printf "export NLS_LANG=American_America.UTF8\n" >> /etc/profile
 ln -s /opt/otrs/.tnsnames.ora $TNS_ADMIN/tnsnames.ora
 ln -s /opt/otrs/.sqlnet.ora $TNS_ADMIN/sqlnet.ora
 
+# Updates Znuny admin password
+su otrs -c "bin/otrs.Console.pl Admin::User::SetPassword root@localhost $OTRS_PASSWORD"
+
 # Rebuilds config
-su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Config::Sync'
+#su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Config::Sync'
 su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Config::Rebuild'
 
 # Deletes cache
@@ -127,6 +133,7 @@ su otrs -c '/opt/otrs/bin/otrs.Console.pl Maint::Cache::Delete' # Not necessary 
 cron
 
 # Starts Daemon through Cron
+#sed -i -e 's/\(\$HOME\/bin\/otrs\.Daemon\.pl start >> \/dev\/null\)/bash -l -c "\1"/g' /opt/otrs/var/cron/otrs_daemon
 su otrs -c '/opt/otrs/bin/Cron.sh start'
 #su otrs -c '/opt/otrs/bin/otrs.Daemon.pl start' # Removing this way because it doesn't recover from crashes
 

@@ -44,7 +44,7 @@ FROM httpd:2.4
       htop bash-completion postgresql-client netcat cron vim \
       odbcinst1debian2 libodbc1 odbcinst unixodbc \
       cpanminus build-essential libtest-nowarnings-perl \
-      libaio1 libaio-dev git \
+      libaio1 libaio-dev \
       && apt-get clean
   RUN echo 'debconf freetds/addtoodbc select true' | debconf-set-selections
   RUN DEBIAN_FRONTEND='noninteractive' apt-get install -y --no-install-recommends tdsodbc
@@ -53,8 +53,6 @@ FROM httpd:2.4
   RUN ln -s /opt/oracle/instantclient_19_16/libsqora.so.19.1 /opt/oracle/instantclient_19_16/libsqora.so
   RUN ORACLE_HOME=/opt/oracle/instantclient_19_16 PATH=$PATH:/opt/oracle/instantclient_19_16 TNS_ADMIN=/opt/oracle/instantclient_19_16/network/admin LD_LIBRARY_PATH=/opt/oracle/instantclient_19_16 NLS_LANG=American_America.UTF8 cpanm DBD::Oracle
   RUN mkdir /opt/oracle/instantclient_19_16/log
-  COPY ./docker/httpd/my-httpd.conf /usr/local/apache2/conf/httpd.conf
-  COPY ./docker/httpd/entrypoint.sh /usr/local/bin/
   ARG OTRS_USER=otrs
   ARG OTRS_GROUP=www-data
   ENV OTRS_USER=${OTRS_USER}
@@ -70,13 +68,14 @@ FROM httpd:2.4
   COPY ./docker/httpd/fixsequences.sql /opt/otrs/docker/httpd/
   COPY ./docker/httpd/Config.pm /opt/otrs/Kernel/
   COPY ./docker/httpd/apache2-httpd.include.conf /opt/otrs/scripts/
-  #RUN ["/bin/bash", "-c", "for foo in /opt/otrs/var/cron/*.dist; do cp /opt/otrs/var/cron/\$foo /opt/otrs/var/cron/\$(basename \$foo .dist); done"]
-  #    COPY ./docker/httpd/otrs_daemon /opt/otrs/var/cron/
-  #    COPY ./docker/httpd/aaa_base /opt/otrs/var/cron/
-  RUN chmod +x /usr/local/bin/entrypoint.sh
+  RUN ["/bin/bash", "-c", "for foo in /opt/otrs/var/cron/*.dist; do mv $foo /opt/otrs/var/cron/$(basename $foo .dist); done"]
+  RUN ["/bin/bash", "-c", "sed -i -e 's/\\(\\$HOME\\/bin\\/otrs\\.Daemon\\.pl start >> \\/dev\\/null\\)/bash -l -c \"\\1\"/g' /opt/otrs/var/cron/otrs_daemon"]
   RUN mkdir -p /opt/otrs/var/tmp
   VOLUME /opt/otrs
   VOLUME /opt/otrs/var/tmp
   VOLUME /opt/otrs/var/article
+  COPY ./docker/httpd/my-httpd.conf /usr/local/apache2/conf/httpd.conf
+  COPY ./docker/httpd/entrypoint.sh /usr/local/bin/
+  RUN chmod +x /usr/local/bin/entrypoint.sh
   WORKDIR /opt/otrs
   ENTRYPOINT ["entrypoint.sh"]

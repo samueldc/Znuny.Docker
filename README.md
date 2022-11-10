@@ -1,8 +1,18 @@
 # Znuny.Docker
 
-Znuny docker image project based on Znuny 6.4.
+Znuny docker image project based on Znuny 6.4 and PostgreSQL.
 
-## About o Znuny
+## Roadmap
+
+- Add Oracle (in progress) and MySQL support.
+- Add a way to install add-ons.
+
+## How to contribute
+
+- Fill a issue.
+- Make a push-request with some code.
+
+## About Znuny
 
 - [Source code](https://github.com/znuny/znuny).
 - [Documentation](https://doc.znuny.org/).
@@ -47,7 +57,7 @@ At least 6GB of RAM is recommended to run the whole stack.
 - Clone the repository.
 - If you use bind, run the script ```docker/local-users.sh``` as root to create the local users accounts and groups (in the case of WSL, ser config **metadata** above) passing the the name of you local user as argument. Example: ```sudo docker/local-users.sh nomeusuario```.
 - You could restore a previous database backup saving the backup file as ```docker/httpd/otrs.backup``` and changing docker-compose adding command flag from ```-l``` to ```-lo```.
-- Run the stack described in the ```docker-compose.yml``` using ```docker-compose up -d --build```.
+- Run the stack described in the ```docker-compose.yml``` using ```docker-compose up -d --build``` (first time only). From second time on, you could use ```docker-compose up -d```.
 - Check if the 4 containers are running using ```docker ps -a```.
 - Check if the volumes were created using ```docker volume ls```.
 - Check if the startup of the database.
