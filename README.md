@@ -63,8 +63,8 @@ At least 6GB of RAM is recommended to run the whole stack.
 - Check if the startup of the database.
 - Check if httpd and the Znuny Daemon was initiated.
 - Access services using localhost.
-  - Znuny: http://localhost:8080/otrs/index.pl
-  - pgAdmin: http://localhost:8089
+  - Znuny: http://localhost:8090/otrs/index.pl
+  - pgAdmin: http://localhost:8099
 - In the first time, you need to setup the connection in the pgAdmin console.
 - Complete Znuny installation process using http://localhost:8080/otrs/installer.pl.
 
