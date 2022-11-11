@@ -1,0 +1,80 @@
+/*
+Copyright (C) 2001-2021 OTRS AG, https://otrs.com/
+Copyright (C) 2021-2022 Znuny GmbH, https://znuny.org/
+
+This software comes with ABSOLUTELY NO WARRANTY. For details, see
+the enclosed file COPYING for license information (GPL). If you
+did not receive this file, see https://www.gnu.org/licenses/gpl-3.0.txt.
+*/
+
+/**
+ * @package     Skin "Default"
+ */
+
+/**
+ * @section     Colors
+ */
+
+/*
+ * Used colors in Znuny:
+ * ---------------------
+ *
+ * Variable                             Description                         Default
+ *
+ * var(--color-black);                                                      Black
+ * var(--color-red);                                                        Red
+ * var(--color-orange);                                                     Orange
+ * var(--color-yellow);                                                     Yellow
+ * var(--color-green);                                                      Green
+ * var(--color-grey1);                                                      Grey #111
+ * var(--color-grey2);                                                      Grey #222
+ * var(--color-grey3);                                                      Grey #333
+ * var(--color-grey4);                                                      Grey #444
+ * var(--color-grey5);                                                      Grey #555
+ * var(--color-grey6);                                                      Grey #666
+ * var(--color-grey7);                                                      Grey #777
+ * var(--color-grey8);                                                      Grey #888
+ * var(--color-grey9);                                                      Grey #999
+ * var(--color-grey10);                                                     Grey #AAA
+ * var(--color-grey11);                                                     Grey #BBB
+ * var(--color-grey12);                                                     Grey #CCC
+ * var(--color-grey13);                                                     Grey #DDD
+ * var(--color-grey14);                                                     Grey #EEE
+ */
+
+:root {
+
+    /* black */
+    --color-black:                    #000;
+
+    /* red */
+    --color-red:                      #b8384e;
+
+    /* orange */
+    --color-orange:                   #FF9050;
+
+    /* yellow */
+    --color-yellow:                   #FFDD50;
+
+    /* green */
+    --color-green:                    #049E35;
+
+    /* white */
+    --color-white:                    #FFF;
+
+    /* grey */
+    --color-grey1:                    #111;
+    --color-grey2:                    #222;
+    --color-grey3:                    #333;
+    --color-grey4:                    #444;
+    --color-grey5:                    #555;
+    --color-grey6:                    #666;
+    --color-grey7:                    #777;
+    --color-grey8:                    #888;
+    --color-grey9:                    #999;
+    --color-grey10:                   #AAA;
+    --color-grey11:                   #BBB;
+    --color-grey12:                   #CCC;
+    --color-grey13:                   #DDD;
+    --color-grey14:                   #EEE;
+}
