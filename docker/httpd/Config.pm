@@ -100,6 +100,8 @@ sub Load {
 
     $Self->{'Daemon::SchedulerTaskWorker::NotificationRecipientEmail'} = $ENV{OTRS_ADMINEMAIL};;
 
+    $Self->{'SecureMode'} =  '1';
+
 # ---------------------------------------------------- #
     # ---------------------------------------------------- #
     #                                                      #

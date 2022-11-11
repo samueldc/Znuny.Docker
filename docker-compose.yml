@@ -1,7 +1,7 @@
 version: "3.6"
 services:
   httpd:
-    build:
+    build: 
       context: .
       dockerfile: ./docker/httpd/Dockerfile
     command: [ "-l" ]
@@ -23,8 +23,11 @@ services:
       - OTRS_ADMINEMAIL=${OTRS_ADMINEMAIL:-root@localhost}
     volumes: 
       #- type: bind
-      #  source: .
+      #  source: ./znuny
       #  target: /opt/otrs/
+      #- type: bind
+      #  source: ./docker/httpd
+      #  target: /opt/docker/httpd
       - type: volume
         source: article
         target: /opt/otrs/var/article
@@ -37,7 +40,9 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
   postgres:
-    build: ./docker/postgres
+    build: 
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile
     shm_size: 256mb
     environment:
       - POSTGRES_PASSWORD=otrs

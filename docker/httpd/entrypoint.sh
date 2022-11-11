@@ -30,9 +30,9 @@ printf "export OTRS_ADMINEMAIL=$OTRS_ADMINEMAIL\n" >> /etc/profile
 #. /etc/profile
 
 # Grants execution permission to merge database script
-chmod u+x /opt/otrs/docker/httpd/mergedb.sh
-chmod u+x /opt/otrs/docker/httpd/overwritedb.sh
-chmod u+x /opt/otrs/docker/httpd/fixsequencesdb.sh
+chmod u+x /opt/docker/httpd/mergedb.sh
+chmod u+x /opt/docker/httpd/overwritedb.sh
+chmod u+x /opt/docker/httpd/fixsequencesdb.sh
 
 # Creates postgres password file based on env variables
 echo "$POSTGRES_HOST:$POSTGRES_PORT:$POSTGRES_DB:$POSTGRES_USER:$POSTGRES_PASSWORD" > /.pgpass
@@ -52,7 +52,7 @@ done
 
 # Runs merge database script
 mergedb() {
-  /opt/otrs/docker/httpd/mergedb.sh
+  /opt/docker/httpd/mergedb.sh
 }
 
 # Runs migration script in case of upgrade
@@ -65,12 +65,12 @@ runmigration() {
 
 # Runs overwrite database script
 overwritedb() {
-  /opt/otrs/docker/httpd/overwritedb.sh
+  /opt/docker/httpd/overwritedb.sh
 }
 
 # Runs fix sequences script
 fixsequencesdb() {
-  /opt/otrs/docker/httpd/fixsequencesdb.sh
+  /opt/docker/httpd/fixsequencesdb.sh
 }
 
 # Check if environment is local

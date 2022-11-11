@@ -10,5 +10,5 @@ set -e
 if [[ -f "/docker-entrypoint-initdb.d/otrs.backup" ]]; then
   pg_restore -U "$POSTGRES_USER" -F custom -n public --verbose -O -cC --if-exists -d "$POSTGRES_DB" /docker-entrypoint-initdb.d/otrs.backup
 else
-  echo "Warning: Backup file not found at /opt/otrs/docker/httpd/otrs.backup"
+  echo "Warning: Backup file not found at /docker-entrypoint-initdb.d/otrs.backup"
 fi

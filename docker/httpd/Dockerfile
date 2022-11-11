@@ -1,15 +1,7 @@
 FROM debian:11 AS download
   RUN apt-get update \ 
-      && apt-get install -y --no-install-recommends wget unzip git \
+      && apt-get install -y --no-install-recommends wget unzip \
       && apt-get clean
-  # ADD https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip /opt/oracle/
-  # ADD https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip /opt/oracle/
-  # ADD https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip /opt/oracle/
-  # ADD https://download.oracle.com/otn_software/linux/instantclient/185000/instantclient-odbc-linux.x64-18.5.0.0.0dbru.zip /opt/oracle/
-  # RUN unzip /opt/oracle/instantclient-basic-linux.x64-18.5.0.0.0dbru.zip -d /opt/oracle/
-  # RUN unzip /opt/oracle/instantclient-sdk-linux.x64-18.5.0.0.0dbru.zip -d /opt/oracle/
-  # RUN unzip /opt/oracle/instantclient-sqlplus-linux.x64-18.5.0.0.0dbru.zip -d /opt/oracle/
-  # RUN unzip /opt/oracle/instantclient-odbc-linux.x64-18.5.0.0.0dbru.zip -d /opt/oracle/
   ADD https://download.oracle.com/otn_software/linux/instantclient/1916000/instantclient-basic-linux.x64-19.16.0.0.0dbru.zip /opt/oracle/
   ADD https://download.oracle.com/otn_software/linux/instantclient/1916000/instantclient-sdk-linux.x64-19.16.0.0.0dbru.zip /opt/oracle/
   ADD https://download.oracle.com/otn_software/linux/instantclient/1916000/instantclient-sqlplus-linux.x64-19.16.0.0.0dbru.zip /opt/oracle/
@@ -18,10 +10,6 @@ FROM debian:11 AS download
   RUN unzip /opt/oracle/instantclient-sdk-linux.x64-19.16.0.0.0dbru.zip -d /opt/oracle/
   RUN unzip /opt/oracle/instantclient-sqlplus-linux.x64-19.16.0.0.0dbru.zip -d /opt/oracle/
   RUN unzip /opt/oracle/instantclient-odbc-linux.x64-19.16.0.0.0dbru.zip -d /opt/oracle/
-  RUN mkdir -p /opt/otrs \
-    && git config --global http.sslverify false \
-    && git clone -b rel-6_4 https://github.com/znuny/Znuny.git /opt/otrs
-  # ADD --chown=${OTRS_USER}:${OTRS_GROUP} https://github.com/znuny/Znuny.git#rel-6_4 /opt/otrs/
 FROM httpd:2.4
   RUN ln -s /usr/local/apache2 /usr/lib/apache2
   RUN apt-get update \ 
@@ -60,12 +48,12 @@ FROM httpd:2.4
   RUN groupadd -g 5051 ${OTRS_USER}
   RUN useradd -d /opt/otrs -u 5051 -g 5051 -G 33 -s /bin/bash ${OTRS_USER}
   RUN usermod -aG 5051 ${OTRS_GROUP}
-  COPY --from=download --chown=${OTRS_USER}:${OTRS_GROUP} /opt/otrs /opt/otrs
-  COPY ./docker/httpd/mergedb.sh /opt/otrs/docker/httpd/
-  COPY ./docker/httpd/mergeschemas.sql /opt/otrs/docker/httpd/
-  COPY ./docker/httpd/overwritedb.sh /opt/otrs/docker/httpd/
-  COPY ./docker/httpd/fixsequencesdb.sh /opt/otrs/docker/httpd/
-  COPY ./docker/httpd/fixsequences.sql /opt/otrs/docker/httpd/
+  COPY --chown=${OTRS_USER}:${OTRS_GROUP} ./znuny /opt/otrs
+  COPY ./docker/httpd/mergedb.sh /opt/docker/httpd/
+  COPY ./docker/httpd/mergeschemas.sql /opt/docker/httpd/
+  COPY ./docker/httpd/overwritedb.sh /opt/docker/httpd/
+  COPY ./docker/httpd/fixsequencesdb.sh /opt/docker/httpd/
+  COPY ./docker/httpd/fixsequences.sql /opt/docker/httpd/
   COPY ./docker/httpd/Config.pm /opt/otrs/Kernel/
   COPY ./docker/httpd/apache2-httpd.include.conf /opt/otrs/scripts/
   RUN ["/bin/bash", "-c", "for foo in /opt/otrs/var/cron/*.dist; do mv $foo /opt/otrs/var/cron/$(basename $foo .dist); done"]
@@ -74,6 +62,7 @@ FROM httpd:2.4
   VOLUME /opt/otrs
   VOLUME /opt/otrs/var/tmp
   VOLUME /opt/otrs/var/article
+  VOLUME /opt/docker/httpd
   COPY ./docker/httpd/my-httpd.conf /usr/local/apache2/conf/httpd.conf
   COPY ./docker/httpd/entrypoint.sh /usr/local/bin/
   RUN chmod +x /usr/local/bin/entrypoint.sh
